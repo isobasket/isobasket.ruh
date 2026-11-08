@@ -1,0 +1,600 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>1v1 Basketball Tournament</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap">
+<style>
+/* Layout: blue painted-court hero with half-court line art, then calm content bands; bilingual EN/AR with RTL mirroring. */
+:root{
+  --bg:#f2f5fa; --surface:#ffffff; --fg:#0e1a33; --muted:#52607c; --line:#cfd8e8;
+  --court:#1e4fd8; --hero-bg:#1e4fd8; --hero-fg:#ffffff; --hero-line:rgba(255,255,255,.24);
+  --accent:#f26a1b; --on-accent:#1b0a00; --good:#177a45; --bad:#b3261e; --focus:#0e1a33;
+  --f-display:'Cairo','Segoe UI',system-ui,sans-serif;
+  --f-body:'IBM Plex Sans Arabic','Segoe UI',system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0a111f; --surface:#121c32; --fg:#e8eefc; --muted:#9aa9c7; --line:#263556;
+  --court:#6b94ff; --hero-bg:#112867; --hero-fg:#ffffff; --hero-line:rgba(255,255,255,.2);
+  --accent:#ff8340; --on-accent:#1b0a00; --good:#4cc98a; --bad:#ff8a80; --focus:#e8eefc; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0a111f; --surface:#121c32; --fg:#e8eefc; --muted:#9aa9c7; --line:#263556;
+  --court:#6b94ff; --hero-bg:#112867; --hero-fg:#ffffff; --hero-line:rgba(255,255,255,.2);
+  --accent:#ff8340; --on-accent:#1b0a00; --good:#4cc98a; --bad:#ff8a80; --focus:#e8eefc; color-scheme:dark}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:16px;line-height:1.6}
+.wrap{max-width:1040px;margin-inline:auto;padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-area-inset-right,0px))}
+@supports not (padding-inline:1px){.wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px;border-radius:4px}
+h1,h2,h3{font-family:var(--f-display);line-height:1.1;margin:0;text-wrap:balance}
+p{margin:0}
+
+/* top bar + hero */
+.hero{background:var(--hero-bg);color:var(--hero-fg);position:relative;overflow:hidden}
+.court{position:absolute;inset-block:0;inset-inline-end:-6%;height:100%;width:min(70%,620px);pointer-events:none}
+.court *{fill:none;stroke:var(--hero-line);stroke-width:3}
+.bar{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;justify-content:space-between;padding-block:16px;position:relative}
+.brand{font-family:var(--f-display);font-weight:900;font-size:20px;letter-spacing:.02em}
+.nav{display:flex;flex-wrap:wrap;gap:4px 18px;font-size:14px;font-weight:500}
+.nav a{text-decoration:none;opacity:.9;padding:4px 0}
+.nav a:hover{text-decoration:underline}
+.lang{font:600 14px var(--f-body);background:transparent;color:var(--hero-fg);border:1.5px solid var(--hero-fg);border-radius:999px;padding:6px 16px;cursor:pointer}
+.lang:hover{background:var(--hero-fg);color:var(--hero-bg)}
+.hero-body{position:relative;padding-block:56px 64px;display:grid;gap:22px;max-width:640px}
+.eyebrow{font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-weight:900;font-size:clamp(38px,7.5vw,72px)}
+.hero p.sub{font-size:18px;max-width:46ch;opacity:.95}
+.cta-row{display:flex;flex-wrap:wrap;gap:12px}
+.btn{font:600 16px var(--f-body);border-radius:10px;padding:13px 24px;border:2px solid transparent;cursor:pointer;text-decoration:none;display:inline-block;text-align:center}
+.btn-primary{background:var(--accent);color:var(--on-accent)}
+.btn-primary:hover{filter:brightness(1.08)}
+.btn-primary[disabled]{opacity:.6;cursor:wait}
+.btn-ghost{border-color:var(--hero-fg);color:var(--hero-fg);background:transparent}
+.btn-ghost:hover{background:var(--hero-fg);color:var(--hero-bg)}
+.btn-line{border-color:var(--fg);color:var(--fg);background:transparent}
+.btn-line:hover{background:var(--fg);color:var(--bg)}
+
+/* sections */
+section{padding-block:56px 8px}
+.sec-h{display:grid;gap:8px;margin-bottom:24px}
+.sec-h h2{font-weight:900;font-size:clamp(28px,5vw,40px)}
+.sec-h p{color:var(--muted);max-width:62ch}
+.sub-h{font-size:22px;font-weight:700;margin:28px 0 12px}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
+.fact{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px;min-width:0}
+.fact small{display:block;font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.fact b{display:block;font-family:var(--f-display);font-weight:700;font-size:21px;margin-top:4px;overflow-wrap:anywhere;line-height:1.25}
+.rules{list-style:none;margin:0 0 24px;padding:0;display:grid;gap:0;counter-reset:r;max-width:800px}
+.rules li{counter-increment:r;display:grid;grid-template-columns:44px 1fr;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
+.rules li::before{content:counter(r);font-family:var(--f-display);font-weight:900;font-size:22px;color:var(--court);font-variant-numeric:tabular-nums}
+.note{margin-top:14px;font-size:14px;color:var(--muted)}
+.scroll{overflow-x:auto;padding-bottom:8px}
+.tbl{width:100%;min-width:480px;border-collapse:collapse;background:var(--surface);border:1px solid var(--line);font-variant-numeric:tabular-nums}
+.tbl th,.tbl td{padding:10px 14px;text-align:start;border-bottom:1px solid var(--line)}
+.tbl th{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.tbl tr:last-child td{border-bottom:0}
+.tbl tr.tot td{font-weight:600}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:20px}
+.bul{margin:12px 0 0;padding-inline-start:22px;display:grid;gap:8px}
+.panel h3{font-size:20px;font-weight:700}
+
+/* schedule */
+.days{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:14px}
+.day{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px;min-width:0}
+.day .dn{font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--court)}
+.day h3{font-size:22px;font-weight:700;margin:2px 0 6px}
+.day .dm{color:var(--muted);font-size:14px;margin-bottom:10px}
+.t{display:grid;grid-template-columns:8em 1fr;gap:10px;padding:8px 0;border-top:1px solid var(--line);font-size:15px}
+.t b{font-weight:600;font-variant-numeric:tabular-nums}
+
+/* form */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:clamp(18px,4vw,32px)}
+.terms{margin-bottom:24px;padding-bottom:22px;border-bottom:1px solid var(--line)}
+.terms h3{font-size:20px;font-weight:700}
+.form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.field{display:grid;gap:6px;min-width:0;align-content:start}
+.field.full{grid-column:1/-1}
+label,.lbl{font-weight:600;font-size:14px}
+.opt{font-weight:400;color:var(--muted)}
+input[type=text],input[type=tel],input[type=number],input[type=url],select,textarea{font:inherit;width:100%;color:var(--fg);background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:11px 13px;min-width:0}
+input:focus,select:focus,textarea:focus{border-color:var(--court);outline:2px solid var(--court);outline-offset:0}
+input[type=file]{font:inherit;color:var(--fg);width:100%;min-width:0}
+.hint{font-size:13px;color:var(--muted)}
+.check{display:flex;gap:10px;align-items:flex-start;font-weight:400}
+.check input{margin-top:5px;width:18px;height:18px;flex:none}
+.hl{border:1.5px dashed var(--line);border-radius:12px;padding:16px;display:grid;gap:14px}
+.hl h3{font-size:20px;font-weight:700}
+.status{min-height:1.5em;font-weight:500}
+.status.ok{color:var(--good)} .status.err{color:var(--bad)}
+.banner{background:var(--bg);border:1px solid var(--line);border-inline-start:5px solid var(--good);border-radius:10px;padding:12px 16px;margin-bottom:18px}
+.fallback{margin-top:16px;border:1.5px solid var(--accent);border-radius:12px;padding:16px;display:grid;gap:12px}
+.fallback pre{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;font:14px/1.5 var(--f-body);background:var(--bg);border-radius:8px;padding:12px}
+.fb-row{display:flex;flex-wrap:wrap;gap:10px}
+
+/* bracket */
+.bracket{display:grid;grid-template-columns:repeat(4,minmax(170px,1fr));gap:24px;min-width:760px}
+.round{display:grid;align-content:space-around;gap:12px}
+.round h3{font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.match{background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.slot{padding:8px 12px;display:flex;justify-content:space-between;gap:8px;font-weight:500;min-height:40px;align-items:center;font-size:15px}
+.slot+.slot{border-top:1px solid var(--line)}
+.slot.tbd{color:var(--muted)}
+.slot.win{background:var(--court);color:var(--hero-fg);font-weight:600}
+.champ{background:var(--accent);color:var(--on-accent);border-radius:10px;padding:12px 14px;font-family:var(--f-display);font-weight:900;font-size:20px;text-align:center}
+
+/* prizes, contact */
+.prizes{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.prize{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px;min-width:0}
+.prize .pl{font-family:var(--f-display);font-weight:900;font-size:34px;color:var(--court);line-height:1.1}
+.prize h3{font-size:19px;font-weight:700;margin-top:6px}
+.prize p{color:var(--muted);font-size:14px;margin-top:4px}
+.contact{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.numtxt{font-family:var(--f-display);font-weight:700;font-size:22px;direction:ltr;unicode-bidi:isolate;user-select:all}
+
+/* organizer */
+.org-list{display:grid;gap:12px;margin-top:8px}
+.player{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:grid;gap:8px;min-width:0}
+.player h3{font-size:20px}
+.meta{display:flex;flex-wrap:wrap;gap:4px 16px;color:var(--muted);font-size:14px}
+.player video{width:100%;max-width:520px;border-radius:8px;background:#000}
+footer{padding-block:48px;color:var(--muted);font-size:14px}
+@media (max-width:640px){.form,.two{grid-template-columns:minmax(0,1fr)}.hero-body{padding-block:36px 44px}.court{width:100%;opacity:.7}.t{grid-template-columns:6.5em 1fr}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+
+<header class="hero">
+  <svg class="court" viewBox="0 0 400 480" preserveAspectRatio="xMaxYMid slice" aria-hidden="true">
+    <rect x="30" y="20" width="340" height="440"/>
+    <rect x="130" y="20" width="140" height="190"/>
+    <circle cx="200" cy="210" r="70"/>
+    <path d="M60 20 V120 A140 140 0 0 0 340 120 V20"/>
+    <path d="M170 20 a30 30 0 0 0 60 0"/>
+    <line x1="170" y1="60" x2="230" y2="60"/>
+  </svg>
+  <div class="wrap">
+    <div class="bar">
+      <div class="brand" data-i18n="brand">Riyadh 1v1</div>
+      <nav class="nav" aria-label="Sections">
+        <a href="#info" data-i18n="nav_info">Details</a>
+        <a href="#format" data-i18n="nav_format">Format</a>
+        <a href="#rules" data-i18n="nav_rules">Rules</a>
+        <a href="#register" data-i18n="nav_reg">Register</a>
+        <a href="#bracket" data-i18n="nav_bracket">Bracket</a>
+        <a href="#prizes" data-i18n="nav_prizes">Prizes</a>
+        <a href="#contact" data-i18n="nav_contact">Contact</a>
+      </nav>
+      <button class="lang" id="langBtn" type="button">العربية</button>
+    </div>
+    <div class="hero-body">
+      <div class="eyebrow" data-i18n="eyebrow">32 players · 3 evenings · Indoor</div>
+      <h1 data-i18n="title">Riyadh 1v1 Basketball Tournament</h1>
+      <p class="sub" data-i18n="sub">32 players over three evenings. Every player gets at least 2 games. Sign up, send us your best highlights and claim your spot.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="#register" data-i18n="cta">Register now</a>
+        <a class="btn btn-ghost" href="#rules" data-i18n="cta2">Read the rules</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section id="info">
+    <div class="sec-h"><h2 data-i18n="h_info">Tournament details</h2></div>
+    <div class="facts">
+      <div class="fact"><small data-i18n="f_players">Players</small><b data-i18n="v_players">32 players, 1v1</b></div>
+      <div class="fact"><small data-i18n="f_format">Format</small><b data-i18n="v_format">Swiss stage, then a 16-player knockout</b></div>
+      <div class="fact"><small data-i18n="f_days">Length</small><b data-i18n="v_days">3 evenings, indoor court</b></div>
+      <div class="fact"><small data-i18n="f_date">Date</small><b id="fDate"></b></div>
+      <div class="fact"><small data-i18n="f_venue">Venue</small><b id="fVenue"></b></div>
+      <div class="fact"><small data-i18n="f_fee">Entry fee</small><b id="fFee"></b></div>
+    </div>
+  </section>
+
+  <section id="format">
+    <div class="sec-h">
+      <h2 data-i18n="h_format">How the tournament works</h2>
+      <p data-i18n="format_sub">Every player is guaranteed at least 2 games. The first two rounds (the Swiss stage) decide who reaches the 16-player knockout. From the Round of 16 on, one loss and you are out.</p>
+    </div>
+    <div class="scroll"><div id="stageTbl"></div></div>
+    <div class="two">
+      <div class="panel"><h3 data-i18n="h_swiss">The Swiss stage</h3><ul class="bul" id="swissList"></ul></div>
+      <div class="panel"><h3 data-i18n="h_tie">Ranking and tiebreakers</h3><ol class="bul" id="tieList"></ol><p class="note" data-i18n="seed_note"></p></div>
+    </div>
+    <h3 class="sub-h" data-i18n="h_games">How many games you play</h3>
+    <div class="scroll"><div id="gamesTbl"></div></div>
+  </section>
+
+  <section id="schedule">
+    <div class="sec-h">
+      <h2 data-i18n="h_sched">Day by day</h2>
+      <p data-i18n="sched_note">Dates and venue are still to be confirmed. The times below follow the tournament plan.</p>
+    </div>
+    <div class="days" id="dayBox"></div>
+  </section>
+
+  <section id="rules">
+    <div class="sec-h"><h2 data-i18n="h_rules">Game rules</h2></div>
+    <ol class="rules" id="rulesList"></ol>
+    <div class="scroll"><div id="capsTbl"></div></div>
+  </section>
+
+  <section id="register">
+    <div class="sec-h">
+      <h2 data-i18n="h_reg">Register to play</h2>
+      <p data-i18n="reg_sub">32 spots. Highlights are optional and help the organizers get to know you.</p>
+    </div>
+    <div class="panel">
+      <div class="terms"><h3 data-i18n="h_terms">Before you register</h3><ul class="bul" id="termsList"></ul></div>
+      <div class="banner" id="already" hidden></div>
+      <form class="form" id="regForm" novalidate>
+        <div class="field"><label for="fName" data-i18n="l_name">Full name</label><input id="fName" name="name" type="text" autocomplete="name" required maxlength="80"></div>
+        <div class="field"><label for="fAge" data-i18n="l_age">Age</label><input id="fAge" name="age" type="number" inputmode="numeric" min="8" max="70" required></div>
+        <div class="field"><label for="fCity" data-i18n="l_city">City</label><input id="fCity" name="city" type="text" autocomplete="address-level2" required maxlength="60"></div>
+        <div class="field"><label for="fPhone" data-i18n="l_phone">WhatsApp number</label><input id="fPhone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required maxlength="24" dir="ltr" placeholder="+966 5X XXX XXXX"></div>
+        <div class="field"><label for="fHeight"><span data-i18n="l_height">Height (cm)</span> <span class="opt" data-i18n="optional">(optional)</span></label><input id="fHeight" name="height" type="number" inputmode="numeric" min="120" max="240"></div>
+        <div class="field"><label for="fStyle" data-i18n="l_style">Playing style</label>
+          <select id="fStyle" name="style" required>
+            <option value="" data-i18n="s_pick">Choose one</option>
+            <option value="Scorer" data-i18n="s_scorer">Scorer</option>
+            <option value="Shooter" data-i18n="s_shooter">Shooter</option>
+            <option value="Slasher" data-i18n="s_slasher">Slasher / driver</option>
+            <option value="Big" data-i18n="s_big">Post player</option>
+            <option value="Defender" data-i18n="s_def">Lockdown defender</option>
+            <option value="All-round" data-i18n="s_all">All-round</option>
+          </select></div>
+        <div class="field full"><label for="fIg"><span data-i18n="l_ig">Instagram or TikTok</span> <span class="opt" data-i18n="optional">(optional)</span></label><input id="fIg" name="ig" type="text" maxlength="60" dir="ltr" placeholder="@username"></div>
+
+        <div class="field full hl">
+          <h3 data-i18n="h_hl">Your highlights (optional)</h3>
+          <div class="field"><label for="fLink" data-i18n="l_link">Link to a highlight video</label><input id="fLink" name="link" type="url" dir="ltr" placeholder="https://" maxlength="300"><span class="hint" data-i18n="h_link">YouTube, Instagram, TikTok or Google Drive. Make sure anyone with the link can view it.</span></div>
+          <div class="field" id="upWrap"><label for="fFile" data-i18n="l_file">Or upload a video</label><input id="fFile" name="file" type="file" accept="video/*"><span class="hint" id="upHint" data-i18n="h_file">MP4 or MOV, up to 20 MB. Keep it to your best 30 to 60 seconds.</span></div>
+        </div>
+
+        <div class="field full"><label class="check" for="fOk"><input id="fOk" type="checkbox" required><span data-i18n="l_ok">I confirm my details are correct and I accept the tournament rules. I will sign the waiver and bring my ID at check-in. If I am under 18, my guardian approves my entry.</span></label></div>
+        <div class="field full">
+          <div class="cta-row"><button class="btn btn-primary" id="subBtn" type="submit" data-i18n="submit">Submit registration</button></div>
+          <p class="status" id="status" role="status" aria-live="polite"></p>
+        </div>
+      </form>
+      <div class="fallback" id="fallback" hidden>
+        <b data-i18n="fb_title">We could not save your form here.</b>
+        <p data-i18n="fb_body">Send your details to the organizers instead. Copy the message below and send it on WhatsApp, together with your highlight video or link.</p>
+        <pre id="fbText"></pre>
+        <div class="fb-row">
+          <button class="btn btn-line" id="fbCopy" type="button" data-i18n="copy">Copy message</button>
+          <a class="btn btn-primary" id="fbWa" href="#" target="_blank" rel="noopener" hidden data-i18n="wa_send">Open WhatsApp</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="bracket">
+    <div class="sec-h">
+      <h2 data-i18n="h_bracket">Knockout bracket</h2>
+      <p data-i18n="bracket_sub">The top 16 from the Swiss stage are seeded here after Day 1. Results update after every game.</p>
+    </div>
+    <div class="scroll"><div class="bracket" id="bracketBox"></div></div>
+  </section>
+
+  <section id="prizes">
+    <div class="sec-h"><h2 data-i18n="h_prizes">Prizes and sponsors</h2></div>
+    <div class="prizes" id="prizeBox"></div>
+    <p class="note" data-i18n="sponsor_note">Sponsor logos will appear here.</p>
+  </section>
+
+  <section id="contact">
+    <div class="sec-h">
+      <h2 data-i18n="h_contact">Questions?</h2>
+      <p data-i18n="contact_sub">Message the organizers on WhatsApp.</p>
+    </div>
+    <div class="contact">
+      <span class="numtxt" id="waNum"></span>
+      <button class="btn btn-line" id="waCopy" type="button" data-i18n="copy_num">Copy number</button>
+      <a class="btn btn-primary" id="waLink" href="#" target="_blank" rel="noopener" hidden data-i18n="wa_open">Open WhatsApp</a>
+    </div>
+  </section>
+
+  <section id="organizer" hidden>
+    <div class="sec-h">
+      <h2 data-i18n="h_org">Registered players</h2>
+      <p><span id="orgCount">0</span> <span data-i18n="org_sub">players registered. Only organizers see this list.</span></p>
+    </div>
+    <div class="org-list" id="orgList"></div>
+  </section>
+</main>
+<footer class="wrap" data-i18n="footer">See you on the court.</footer>
+
+<script>
+/* Edit these when details are confirmed. null shows "To be announced". Text can be a string or {en, ar}. */
+var CFG = {
+  date: null,
+  venue: null,
+  fee: { en: "250 SAR", ar: "250 ريال" },
+  whatsapp: "",          // digits only with country code, e.g. "9665XXXXXXXX"
+  prizes: null
+};
+
+var T = {
+  en: {
+    brand:"Riyadh 1v1", nav_info:"Details", nav_format:"Format", nav_rules:"Rules", nav_reg:"Register", nav_bracket:"Bracket", nav_prizes:"Prizes", nav_contact:"Contact",
+    eyebrow:"32 players · 3 evenings · Indoor", title:"Riyadh 1v1 Basketball Tournament",
+    sub:"32 players over three evenings. Every player gets at least 2 games. Sign up, send us your best highlights and claim your spot.",
+    cta:"Register now", cta2:"Read the rules",
+    h_info:"Tournament details", f_players:"Players", v_players:"32 players, 1v1", f_format:"Format", v_format:"Swiss stage, then a 16-player knockout",
+    f_days:"Length", v_days:"3 evenings, indoor court", f_date:"Date", f_venue:"Venue", f_fee:"Entry fee", tba:"To be announced",
+    h_format:"How the tournament works",
+    format_sub:"Every player is guaranteed at least 2 games. The first two rounds (the Swiss stage) decide who reaches the 16-player knockout. From the Round of 16 on, one loss and you are out.",
+    stageHead:["Stage","Players","Games","Day"],
+    stageRows:[["Swiss Round 1 (random draw)","32","16","Day 1"],["Swiss Round 2 (same record plays)","32","16","Day 1"],["Round of 16","16","8","Day 2"],["Quarterfinals","8","4","Day 2"],["Semifinals","4","2","Day 3"],["Final","2","1","Day 3"],["Total","","47",""]],
+    h_swiss:"The Swiss stage",
+    swiss:["Round 1 is a random draw: 16 games, 16 winners and 16 losers.","Round 2: winners play winners and losers play losers, so nobody meets the same opponent twice.","2-0 (8 players): advance to the Round of 16.","1-1 (16 players): the best 8 advance, ranked by the tiebreakers.","0-2 (8 players): eliminated."],
+    h_tie:"Ranking and tiebreakers",
+    tie:["Record: 2-0 players rank above 1-1 players.","Point difference: points scored minus points allowed over the 2 games.","Total points scored: the higher total ranks higher.","Sudden-death shootout: one shot each from the top of the key, repeated until one scores and the other misses."],
+    seed_note:"Knockout seeding: seed 1 plays seed 16, seed 2 plays seed 15, and so on, so the strongest players meet as late as possible.",
+    h_games:"How many games you play", gamesHead:["Your result","Games played"],
+    gamesRows:[["Out after the Swiss stage","2"],["Lose in the Round of 16","3"],["Lose in the quarterfinals","4"],["Lose in the semifinals","5"],["Finalist or champion","6"]],
+    h_sched:"Day by day", sched_note:"Dates and venue are still to be confirmed. The times below follow the tournament plan.",
+    days:[
+      {n:"Day 1", t:"Swiss stage (Rounds 1 and 2)", m:"32 players · 32 games · two games at a time · first to 11", r:[["5:30 PM","Arrival, check-in, waivers, bibs, warm-up"],["5:50 PM","Rules briefing and Round 1 random draw"],["6:00 to 7:36 PM","Round 1: 16 games"],["7:36 to 7:51 PM","Break. Round 2 pairings posted"],["7:51 to 9:27 PM","Round 2: 16 games"],["9:27 to 9:45 PM","Standings posted and top 16 announced"]]},
+      {n:"Day 2", t:"Round of 16 and quarterfinals", m:"16 players · 12 games · two games at a time · Round of 16 to 11, quarterfinals to 21", r:[["6:30 PM","Check-in for the 16 qualifiers and knockout draw by seed"],["7:00 to 7:48 PM","Round of 16: 8 games"],["7:48 to 8:03 PM","Break"],["8:03 to 9:03 PM","Quarterfinals: 4 games"],["9:03 to 9:15 PM","Semifinal matchups announced"]]},
+      {n:"Day 3", t:"Semifinals and final", m:"4 players · 3 games · one game at a time · first to 21, win by 2, 25-minute cap", r:[["7:00 PM","Doors open, music"],["7:30 PM","Opening and player walk-out intros"],["7:45 to 8:15 PM","Semifinal 1"],["8:15 to 8:30 PM","Break"],["8:30 to 9:00 PM","Semifinal 2"],["9:00 to 9:20 PM","Break and finalist walk-out intros"],["9:20 to 9:50 PM","Final"],["9:50 to 10:15 PM","Trophy ceremony and photos"]]}
+    ],
+    h_rules:"Game rules",
+    rules:["Scoring: 1 point for a basket inside the arc, 2 points for a basket outside the arc.","Check the ball with your opponent at the top of the key to start. Make it, take it: the scorer keeps the ball.","After a miss or a stop, the defender must clear the ball behind the arc before attacking.","Shot clock: 12 seconds on every possession. It starts at the check and resets to 12 after a made basket, a change of possession or a foul. If it hits 0 before the ball hits the rim, it is a turnover.","If time runs out, the higher score wins. If tied, the next basket wins.","The referee calls clear fouls only (hold, push, hit). The fouled player gets the ball at the top. No free throws.","Unsportsmanlike conduct costs 1 point and the ball. A second one is a disqualification.","No timeouts or substitutions. One injury break of up to 2 minutes is allowed. A player who cannot continue forfeits.","Be at the court 30 minutes before your day starts. A player who is not ready 5 minutes after being called forfeits 0-11.","Referee decisions are final. The tournament director can review a rule dispute, not a judgment call."],
+    capsHead:["Round","Play to","Time cap","Win by"],
+    capsRows:[["Swiss rounds and Round of 16","11","10 min","1"],["Quarterfinals","21","25 min","1"],["Semifinals and Final","21","25 min","2"]],
+    h_reg:"Register to play", reg_sub:"32 spots. Highlights are optional and help the organizers get to know you.",
+    h_terms:"Before you register",
+    terms:["Registration closes 3 days before Day 1, or when 32 players have paid.","Pay the entry fee in advance. It is non-refundable after the Round 1 draw.","Sign a waiver and show your ID at check-in.","Wear your numbered bib and indoor basketball shoes.","Players still in the tournament must stay for the awards ceremony on Day 3.","Phones and filming are allowed from the sideline only."],
+    l_name:"Full name", l_age:"Age", l_city:"City", l_phone:"WhatsApp number", l_height:"Height (cm)", optional:"(optional)", l_style:"Playing style",
+    s_pick:"Choose one", s_scorer:"Scorer", s_shooter:"Shooter", s_slasher:"Slasher / driver", s_big:"Post player", s_def:"Lockdown defender", s_all:"All-round",
+    l_ig:"Instagram or TikTok", h_hl:"Your highlights (optional)", l_link:"Link to a highlight video", h_link:"YouTube, Instagram, TikTok or Google Drive. Make sure anyone with the link can view it.",
+    l_file:"Or upload a video", h_file:"MP4 or MOV, up to 20 MB. Keep it to your best 30 to 60 seconds.", h_file_off:"Video upload is not available for your account. Paste a link instead.",
+    l_ok:"I confirm my details are correct and I accept the tournament rules. I will sign the waiver and bring my ID at check-in. If I am under 18, my guardian approves my entry.",
+    submit:"Submit registration", saving:"Saving your registration…", uploading:"Uploading your video…",
+    done:"You are registered. The organizers will contact you on WhatsApp.", fix:"Please fill in every required field.", badlink:"The highlight link must start with https://", toobig:"The video is larger than 20 MB. Upload a shorter clip or paste a link.",
+    already:"You registered as {n}. Submit again to update your details.",
+    fb_title:"We could not save your form here.", fb_body:"Send your details to the organizers instead. Copy the message below and send it on WhatsApp, together with your highlight video or link.",
+    copy:"Copy message", copied:"Copied", wa_send:"Open WhatsApp", copy_num:"Copy number", wa_open:"Open WhatsApp",
+    msg_head:"Riyadh 1v1 tournament registration", m_name:"Name", m_age:"Age", m_city:"City", m_phone:"WhatsApp", m_height:"Height", m_style:"Style", m_ig:"Social", m_link:"Highlights",
+    h_bracket:"Knockout bracket", bracket_sub:"The top 16 from the Swiss stage are seeded here after Day 1. Results update after every game.", r16:"Round of 16", r2:"Quarterfinals", r3:"Semifinals", r4:"Final", seed:"Seed", tbd:"To be decided", champ:"Champion",
+    h_prizes:"Prizes and sponsors", sponsor_note:"Sponsor logos will appear here.",
+    prizes:[{p:"1,500 SAR",t:"Champion",d:"Plus the champion trophy"},{p:"700 SAR",t:"Runner-up",d:"Plus a medal"},{p:"150 SAR",t:"Semifinal losers",d:"Each of the 2 players, plus a medal"}],
+    h_contact:"Questions?", contact_sub:"Message the organizers on WhatsApp.", wa_none:"Number coming soon",
+    h_org:"Registered players", org_sub:"players registered. Only organizers see this list.", o_video:"Uploaded video", o_link:"Highlight link", o_none:"No highlights sent",
+    footer:"See you on the court.", lang:"العربية"
+  },
+  ar: {
+    brand:"بطولة الرياض 1 ضد 1", nav_info:"التفاصيل", nav_format:"النظام", nav_rules:"القوانين", nav_reg:"التسجيل", nav_bracket:"المواجهات", nav_prizes:"الجوائز", nav_contact:"التواصل",
+    eyebrow:"32 لاعباً · 3 أمسيات · صالة مغطاة", title:"بطولة الرياض لكرة السلة 1 ضد 1",
+    sub:"32 لاعباً في ثلاث أمسيات، وكل لاعب يخوض مباراتين على الأقل. سجّل وأرسل لنا أفضل لقطاتك واحجز مكانك.",
+    cta:"سجّل الآن", cta2:"اقرأ القوانين",
+    h_info:"تفاصيل البطولة", f_players:"اللاعبون", v_players:"32 لاعباً، 1 ضد 1", f_format:"نظام البطولة", v_format:"مرحلة سويسرية ثم خروج المغلوب لـ 16 لاعباً",
+    f_days:"المدة", v_days:"3 أمسيات في صالة مغطاة", f_date:"التاريخ", f_venue:"المكان", f_fee:"رسوم الاشتراك", tba:"يُعلن قريباً",
+    h_format:"كيف تسير البطولة",
+    format_sub:"يضمن النظام لكل لاعب مباراتين على الأقل. الجولتان الأوليان (المرحلة السويسرية) تحددان من يصل إلى أدوار الـ 16. ومن دور الـ 16 فصاعداً تعني الخسارة الخروج.",
+    stageHead:["المرحلة","اللاعبون","المباريات","اليوم"],
+    stageRows:[["الجولة السويسرية 1 (قرعة عشوائية)","32","16","اليوم 1"],["الجولة السويسرية 2 (أصحاب النتيجة نفسها يتواجهون)","32","16","اليوم 1"],["دور الـ 16","16","8","اليوم 2"],["ربع النهائي","8","4","اليوم 2"],["نصف النهائي","4","2","اليوم 3"],["النهائي","2","1","اليوم 3"],["المجموع","","47",""]],
+    h_swiss:"المرحلة السويسرية",
+    swiss:["الجولة 1: قرعة عشوائية، 16 مباراة، 16 فائزاً و16 خاسراً.","الجولة 2: الفائزون يلعبون ضد الفائزين والخاسرون ضد الخاسرين، فلا يواجه أحد الخصم نفسه مرتين.","2-0 (8 لاعبين): يتأهلون إلى دور الـ 16.","1-1 (16 لاعباً): يتأهل أفضل 8 بحسب معايير الترتيب.","0-2 (8 لاعبين): يخرجون من البطولة."],
+    h_tie:"الترتيب ومعايير التعادل",
+    tie:["السجل: أصحاب 2-0 قبل أصحاب 1-1.","فارق النقاط: النقاط المسجلة ناقص النقاط المستقبلة في المباراتين.","مجموع النقاط المسجلة: الأعلى يتقدم.","تسديدة فاصلة: تسديدة واحدة لكل لاعب من أعلى المنطقة، وتتكرر حتى يسجل أحدهما ويخطئ الآخر."],
+    seed_note:"توزيع الأدوار الإقصائية: المصنف 1 يلعب ضد 16 والمصنف 2 ضد 15 وهكذا، فيلتقي الأقوى في أبعد مرحلة ممكنة.",
+    h_games:"عدد المباريات التي ستلعبها", gamesHead:["نتيجتك","عدد مبارياتك"],
+    gamesRows:[["الخروج بعد المرحلة السويسرية","2"],["الخسارة في دور الـ 16","3"],["الخسارة في ربع النهائي","4"],["الخسارة في نصف النهائي","5"],["الوصول إلى النهائي أو الفوز باللقب","6"]],
+    h_sched:"يوماً بيوم", sched_note:"الموعد والمكان لم يُحددا بعد. الأوقات أدناه حسب خطة البطولة.",
+    days:[
+      {n:"اليوم 1", t:"المرحلة السويسرية (الجولتان 1 و2)", m:"32 لاعباً · 32 مباراة · مباراتان في الوقت نفسه · حتى 11 نقطة", r:[["5:30 م","الوصول والتسجيل وتوقيع الإقرارات واستلام القمصان والإحماء"],["5:50 م","شرح القوانين وقرعة الجولة 1"],["6:00 إلى 7:36 م","الجولة 1: 16 مباراة"],["7:36 إلى 7:51 م","استراحة، ونشر مواجهات الجولة 2"],["7:51 إلى 9:27 م","الجولة 2: 16 مباراة"],["9:27 إلى 9:45 م","نشر الترتيب وإعلان أفضل 16 لاعباً"]]},
+      {n:"اليوم 2", t:"دور الـ 16 وربع النهائي", m:"16 لاعباً · 12 مباراة · مباراتان في الوقت نفسه · دور الـ 16 حتى 11 وربع النهائي حتى 21", r:[["6:30 م","تسجيل حضور المتأهلين الـ 16 وقرعة الأدوار الإقصائية بحسب التصنيف"],["7:00 إلى 7:48 م","دور الـ 16: 8 مباريات"],["7:48 إلى 8:03 م","استراحة"],["8:03 إلى 9:03 م","ربع النهائي: 4 مباريات"],["9:03 إلى 9:15 م","إعلان مواجهات نصف النهائي"]]},
+      {n:"اليوم 3", t:"نصف النهائي والنهائي", m:"4 لاعبين · 3 مباريات · مباراة واحدة في كل مرة · حتى 21 مع فارق نقطتين وحد زمني 25 دقيقة", r:[["7:00 م","فتح الأبواب والموسيقى"],["7:30 م","الافتتاح وتقديم اللاعبين"],["7:45 إلى 8:15 م","نصف النهائي 1"],["8:15 إلى 8:30 م","استراحة"],["8:30 إلى 9:00 م","نصف النهائي 2"],["9:00 إلى 9:20 م","استراحة وتقديم المتأهلين للنهائي"],["9:20 إلى 9:50 م","النهائي"],["9:50 إلى 10:15 م","حفل التتويج والصور"]]}
+    ],
+    h_rules:"قوانين المباراة",
+    rules:["النقاط: السلة من داخل القوس تحتسب نقطة، ومن خارج القوس نقطتين.","تبدأ المباراة بتبادل الكرة مع الخصم من أعلى المنطقة. من يسجل يحتفظ بالكرة.","بعد التسديدة الضائعة أو الاستخلاص، على المدافع إخراج الكرة خلف القوس قبل أن يهاجم.","ساعة الهجوم: 12 ثانية في كل استحواذ. تبدأ عند تبادل الكرة وتعود إلى 12 بعد السلة أو تغيّر الاستحواذ أو المخالفة. إذا وصلت إلى صفر قبل أن تلمس الكرة الحلقة فهي خسارة للكرة.","إذا انتهى الوقت يفوز صاحب النتيجة الأعلى، وإذا تعادلا يفوز من يسجل السلة التالية.","يحتسب الحكم المخالفات الواضحة فقط (مسك أو دفع أو ضرب). يحصل اللاعب الذي وقعت عليه المخالفة على الكرة من أعلى المنطقة. لا توجد رميات حرة.","السلوك غير الرياضي يكلّف نقطة والكرة للخصم، وتكراره للمرة الثانية يعني الاستبعاد.","لا توجد مهلات ولا تبديلات. يُسمح بتوقف واحد للإصابة حتى دقيقتين، ومن لا يستطيع المواصلة يخسر بالانسحاب.","كن في الملعب قبل بداية يومك بـ 30 دقيقة. من لا يكون جاهزاً بعد 5 دقائق من ندائه يخسر 0-11.","قرارات الحكم نهائية. يستطيع مدير البطولة مراجعة خلاف حول القانون، لا حول تقدير الحكم."],
+    capsHead:["الدور","حتى","الحد الزمني","فارق الفوز"],
+    capsRows:[["الجولتان السويسريتان ودور الـ 16","11 نقطة","10 دقائق","نقطة"],["ربع النهائي","21 نقطة","25 دقيقة","نقطة"],["نصف النهائي والنهائي","21 نقطة","25 دقيقة","نقطتان"]],
+    h_reg:"سجّل للمشاركة", reg_sub:"32 مقعداً. إرسال اللقطات اختياري ويساعد المنظمين على التعرف عليك.",
+    h_terms:"قبل أن تسجل",
+    terms:["يُغلق التسجيل قبل اليوم 1 بثلاثة أيام، أو عند دفع 32 لاعباً.","تُدفع رسوم الاشتراك مقدماً ولا تُسترد بعد قرعة الجولة 1.","وقّع الإقرار وأبرز هويتك عند تسجيل الحضور.","ارتدِ القميص المرقّم وحذاء كرة سلة للصالات.","اللاعبون الباقون في البطولة عليهم البقاء لحفل التتويج في اليوم 3.","الهواتف والتصوير مسموحان من خط التماس فقط."],
+    l_name:"الاسم الكامل", l_age:"العمر", l_city:"المدينة", l_phone:"رقم واتساب", l_height:"الطول (سم)", optional:"(اختياري)", l_style:"أسلوب اللعب",
+    s_pick:"اختر", s_scorer:"مسجّل نقاط", s_shooter:"مسدّد", s_slasher:"مخترق", s_big:"لاعب تحت السلة", s_def:"مدافع قوي", s_all:"لاعب شامل",
+    l_ig:"إنستغرام أو تيك توك", h_hl:"لقطاتك (اختياري)", l_link:"رابط فيديو اللقطات", h_link:"يوتيوب أو إنستغرام أو تيك توك أو جوجل درايف. تأكد أن الرابط يعمل لأي شخص.",
+    l_file:"أو ارفع فيديو", h_file:"MP4 أو MOV بحجم أقصاه 20 ميجابايت. اختر أفضل 30 إلى 60 ثانية.", h_file_off:"رفع الفيديو غير متاح لحسابك. ضع رابطاً بدلاً منه.",
+    l_ok:"أؤكد أن بياناتي صحيحة وأوافق على قوانين البطولة. سأوقّع الإقرار وأحضر هويتي عند تسجيل الحضور. وإذا كان عمري أقل من 18 سنة فإن ولي أمري يوافق على مشاركتي.",
+    submit:"إرسال التسجيل", saving:"جارٍ حفظ تسجيلك…", uploading:"جارٍ رفع الفيديو…",
+    done:"تم تسجيلك. سيتواصل معك المنظمون عبر واتساب.", fix:"فضلاً عبّئ جميع الحقول المطلوبة.", badlink:"يجب أن يبدأ رابط اللقطات بـ https://", toobig:"حجم الفيديو أكبر من 20 ميجابايت. ارفع مقطعاً أقصر أو ضع رابطاً.",
+    already:"سبق أن سجلت باسم {n}. أرسل النموذج مرة أخرى لتحديث بياناتك.",
+    fb_title:"تعذر حفظ النموذج هنا.", fb_body:"أرسل بياناتك إلى المنظمين بدلاً من ذلك. انسخ الرسالة أدناه وأرسلها عبر واتساب مع فيديو اللقطات أو رابطه.",
+    copy:"نسخ الرسالة", copied:"تم النسخ", wa_send:"فتح واتساب", copy_num:"نسخ الرقم", wa_open:"فتح واتساب",
+    msg_head:"تسجيل في بطولة الرياض 1 ضد 1", m_name:"الاسم", m_age:"العمر", m_city:"المدينة", m_phone:"واتساب", m_height:"الطول", m_style:"الأسلوب", m_ig:"الحساب", m_link:"اللقطات",
+    h_bracket:"جدول الأدوار الإقصائية", bracket_sub:"يظهر هنا أفضل 16 لاعباً من المرحلة السويسرية بعد اليوم 1، وتتحدث النتائج بعد كل مباراة.", r16:"دور الـ 16", r2:"ربع النهائي", r3:"نصف النهائي", r4:"النهائي", seed:"المصنف", tbd:"يُحدد لاحقاً", champ:"البطل",
+    h_prizes:"الجوائز والرعاة", sponsor_note:"ستظهر شعارات الرعاة هنا.",
+    prizes:[{p:"1,500 ريال",t:"البطل",d:"مع كأس البطولة"},{p:"700 ريال",t:"الوصيف",d:"مع ميدالية"},{p:"150 ريال",t:"الخاسران في نصف النهائي",d:"لكل لاعب من اللاعبين، مع ميدالية"}],
+    h_contact:"هل لديك سؤال؟", contact_sub:"راسل المنظمين عبر واتساب.", wa_none:"الرقم قريباً",
+    h_org:"اللاعبون المسجلون", org_sub:"لاعب مسجل. هذه القائمة تظهر للمنظمين فقط.", o_video:"فيديو مرفوع", o_link:"رابط اللقطات", o_none:"لم يرسل لقطات",
+    footer:"نراكم في الملعب.", lang:"English"
+  }
+};
+
+var lang = "en", bracketData = null, hasDb = false, assetsApi = null, userApi = null, uid = null, regs = [], mine = null;
+var $ = function(id){ return document.getElementById(id); };
+function tr(k){ return (T[lang] && T[lang][k] != null) ? T[lang][k] : T.en[k]; }
+function cv(x){ return !x ? tr("tba") : (typeof x === "string" ? x : (x[lang] || x.en)); }
+function el(tag, cls, text){ var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+
+function fillList(id, items){ var l = $(id); l.textContent = ""; items.forEach(function(t){ l.appendChild(el("li", null, t)); }); }
+function fillTable(id, head, rows, totalLast){
+  var box = $(id); box.textContent = "";
+  var t = el("table", "tbl"), th = el("thead"), hr = el("tr");
+  head.forEach(function(h){ hr.appendChild(el("th", null, h)); }); th.appendChild(hr); t.appendChild(th);
+  var tb = el("tbody");
+  rows.forEach(function(r, i){ var tr_ = el("tr", totalLast && i === rows.length - 1 ? "tot" : null); r.forEach(function(c){ tr_.appendChild(el("td", null, c)); }); tb.appendChild(tr_); });
+  t.appendChild(tb); box.appendChild(t);
+}
+
+function applyLang(){
+  var d = document.documentElement;
+  d.lang = lang; d.dir = lang === "ar" ? "rtl" : "ltr";
+  document.querySelectorAll("[data-i18n]").forEach(function(e){ var v = tr(e.getAttribute("data-i18n")); if (typeof v === "string") e.textContent = v; });
+  $("langBtn").textContent = tr("lang");
+  $("fDate").textContent = cv(CFG.date); $("fVenue").textContent = cv(CFG.venue); $("fFee").textContent = cv(CFG.fee);
+  fillTable("stageTbl", tr("stageHead"), tr("stageRows"), true);
+  fillList("swissList", tr("swiss")); fillList("tieList", tr("tie"));
+  fillTable("gamesTbl", tr("gamesHead"), tr("gamesRows"), false);
+  var db_ = $("dayBox"); db_.textContent = "";
+  tr("days").forEach(function(day){
+    var c = el("div", "day");
+    c.appendChild(el("div", "dn", day.n)); c.appendChild(el("h3", null, day.t)); c.appendChild(el("div", "dm", day.m));
+    day.r.forEach(function(r){ var row = el("div", "t"); row.appendChild(el("b", null, r[0])); row.appendChild(el("span", null, r[1])); c.appendChild(row); });
+    db_.appendChild(c);
+  });
+  fillList("rulesList", tr("rules"));
+  fillTable("capsTbl", tr("capsHead"), tr("capsRows"), false);
+  fillList("termsList", tr("terms"));
+  var pb = $("prizeBox"); pb.textContent = "";
+  (CFG.prizes || tr("prizes")).forEach(function(p){
+    var c = el("div", "prize");
+    c.appendChild(el("div", "pl", p.p)); c.appendChild(el("h3", null, p.t)); c.appendChild(el("p", null, p.d)); pb.appendChild(c);
+  });
+  var wa = CFG.whatsapp.replace(/\D/g, "");
+  $("waNum").textContent = wa ? "+" + wa : tr("wa_none");
+  $("waCopy").hidden = !wa; $("waLink").hidden = !wa; $("fbWa").hidden = !wa;
+  if (wa) $("waLink").href = "https://wa.me/" + wa;
+  if (!assetsApi) $("upHint").textContent = tr("h_file_off");
+  renderBracket(); renderOrg(); updateAlready();
+  try { localStorage.setItem("lang", lang); } catch (e) {}
+}
+
+/* knockout bracket: seeds[0..15] in seed order, r16[8], qf[4], sf[2] winners, champion */
+function nm(v){ return (v && String(v).trim()) ? String(v) : ""; }
+function renderBracket(){
+  var b = bracketData || {}, seeds = b.seeds || [], r16 = b.r16 || [], qf = b.qf || [], sf = b.sf || [];
+  var box = $("bracketBox"); box.textContent = "";
+  function match(a, c, win, pa, pc){
+    var m = el("div", "match");
+    [[a, pa], [c, pc]].forEach(function(x){
+      var n = x[0], s = el("div", "slot" + (n ? "" : " tbd") + (n && win && n === win ? " win" : ""), n || x[1] || tr("tbd")); m.appendChild(s);
+    });
+    return m;
+  }
+  function round(title){ var r = el("div", "round"); r.appendChild(el("h3", null, title)); box.appendChild(r); return r; }
+  var c1 = round(tr("r16")), c2 = round(tr("r2")), c3 = round(tr("r3")), c4 = round(tr("r4"));
+  var order = [[1,16],[8,9],[5,12],[4,13],[3,14],[6,11],[7,10],[2,15]];
+  order.forEach(function(p, i){ c1.appendChild(match(nm(seeds[p[0]-1]), nm(seeds[p[1]-1]), nm(r16[i]), tr("seed") + " " + p[0], tr("seed") + " " + p[1])); });
+  for (var i = 0; i < 4; i++) c2.appendChild(match(nm(r16[2*i]), nm(r16[2*i+1]), nm(qf[i])));
+  for (var j = 0; j < 2; j++) c3.appendChild(match(nm(qf[2*j]), nm(qf[2*j+1]), nm(sf[j])));
+  c4.appendChild(match(nm(sf[0]), nm(sf[1]), nm(b.champion)));
+  if (nm(b.champion)) c4.appendChild(el("div", "champ", tr("champ") + ": " + b.champion));
+}
+
+/* organizer list */
+function safeUrl(u){ return /^https?:\/\//i.test(u || "") ? u : ""; }
+function renderOrg(){
+  var sec = $("organizer"); if (!sec) return;
+  sec.hidden = !(userApi && userApi.canEdit && userApi.canEdit());
+  if (sec.hidden) return;
+  $("orgCount").textContent = regs.length;
+  var box = $("orgList"); box.textContent = "";
+  regs.forEach(function(r){
+    var c = el("div", "player"); c.appendChild(el("h3", null, r.name || ""));
+    var m = el("div", "meta");
+    [[tr("m_age"), r.age], [tr("m_city"), r.city], [tr("m_phone"), r.phone], [tr("m_height"), r.height ? r.height + " cm" : ""], [tr("m_style"), r.style], [tr("m_ig"), r.ig]].forEach(function(p){
+      if (p[1]) m.appendChild(el("span", null, p[0] + ": " + p[1]));
+    });
+    c.appendChild(m);
+    var any = false;
+    if (safeUrl(r.link)) { any = true; var a = el("a", null, tr("o_link") + " ↗"); a.href = r.link; a.target = "_blank"; a.rel = "noopener"; c.appendChild(a); }
+    if (safeUrl(r.videoUrl)) { any = true; var v = document.createElement("video"); v.controls = true; v.preload = "none"; v.src = r.videoUrl; v.setAttribute("aria-label", tr("o_video")); c.appendChild(v); }
+    if (!any) c.appendChild(el("span", "hint", tr("o_none")));
+    box.appendChild(c);
+  });
+}
+
+/* registration */
+function updateAlready(){
+  var e = $("already");
+  if (!mine) { e.hidden = true; return; }
+  e.hidden = false; e.textContent = tr("already").replace("{n}", mine.name || "");
+}
+function setStatus(msg, kind){ var s = $("status"); s.textContent = msg || ""; s.className = "status" + (kind ? " " + kind : ""); }
+function buildMessage(d){
+  var L = [tr("msg_head")];
+  [["m_name", d.name], ["m_age", d.age], ["m_city", d.city], ["m_phone", d.phone], ["m_height", d.height], ["m_style", d.style], ["m_ig", d.ig], ["m_link", d.link]].forEach(function(p){ if (p[1]) L.push(tr(p[0]) + ": " + p[1]); });
+  return L.join("\n");
+}
+function showFallback(d){
+  $("fallback").hidden = false;
+  var text = buildMessage(d); $("fbText").textContent = text;
+  var wa = CFG.whatsapp.replace(/\D/g, "");
+  if (wa) $("fbWa").href = "https://wa.me/" + wa + "?text=" + encodeURIComponent(text);
+}
+function selectNode(btn){
+  var t = btn.id === "waCopy" ? $("waNum") : $("fbText");
+  var r = document.createRange(); r.selectNodeContents(t); var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+}
+function copyText(text, btn){
+  function done(){ var o = btn.textContent; btn.textContent = tr("copied"); setTimeout(function(){ btn.textContent = o; }, 1500); }
+  try { navigator.clipboard.writeText(text).then(done, function(){ selectNode(btn); }); } catch (e) { selectNode(btn); }
+}
+
+async function onSubmit(e){
+  e.preventDefault();
+  var f = $("regForm");
+  if (!f.checkValidity()) { f.reportValidity(); setStatus(tr("fix"), "err"); return; }
+  var d = {
+    name: $("fName").value.trim(), age: Number($("fAge").value), city: $("fCity").value.trim(), phone: $("fPhone").value.trim(),
+    height: $("fHeight").value ? Number($("fHeight").value) : null, style: $("fStyle").value, ig: $("fIg").value.trim(), link: $("fLink").value.trim(),
+    lang: lang, createdAt: new Date().toISOString()
+  };
+  if (d.link && !/^https:\/\//i.test(d.link)) { setStatus(tr("badlink"), "err"); $("fLink").focus(); return; }
+  var file = $("fFile").files && $("fFile").files[0];
+  if (file && file.size > 20 * 1024 * 1024) { setStatus(tr("toobig"), "err"); return; }
+  var btn = $("subBtn"); btn.disabled = true; $("fallback").hidden = true;
+  try {
+    if (!hasDb || !uid) throw new Error("nodb");
+    if (file) {
+      if (!assetsApi) throw new Error("noassets");
+      setStatus(tr("uploading"));
+      var up = await assetsApi.upload(file);
+      d.videoId = up.id; d.videoUrl = up.url;
+    }
+    setStatus(tr("saving"));
+    var db = await window.claude.use("db");
+    await db.doc("registrations/" + uid).set(d);
+    mine = d; updateAlready();
+    setStatus(tr("done"), "ok"); f.reset();
+  } catch (err) {
+    setStatus("", ""); showFallback(d);
+  }
+  btn.disabled = false;
+}
+
+async function cap(n){ try { return (window.claude && window.claude.use) ? await window.claude.use(n) : null; } catch (e) { return null; } }
+
+async function init(){
+  var saved = null; try { saved = localStorage.getItem("lang"); } catch (e) {}
+  lang = saved === "ar" || saved === "en" ? saved : ((navigator.language || "").toLowerCase().indexOf("ar") === 0 ? "ar" : "en");
+  applyLang();
+  $("langBtn").addEventListener("click", function(){ lang = lang === "en" ? "ar" : "en"; applyLang(); });
+  $("regForm").addEventListener("submit", onSubmit);
+  $("fbCopy").addEventListener("click", function(){ copyText($("fbText").textContent, $("fbCopy")); });
+  $("waCopy").addEventListener("click", function(){ copyText($("waNum").textContent, $("waCopy")); });
+
+  var db = await cap("db");
+  userApi = await cap("user");
+  assetsApi = await cap("assets");
+  hasDb = !!db;
+  if (userApi && userApi.id) { try { uid = await userApi.id(); } catch (e) { uid = null; } }
+  applyLang();
+  if (!db) return;
+  try { db.doc("bracket/main").onSnapshot(function(s){ bracketData = s.exists ? s.data() : null; renderBracket(); }, function(){}); } catch (e) {}
+  if (uid) { try { var s = await db.doc("registrations/" + uid).get(); if (s.exists) { mine = s.data(); updateAlready(); } } catch (e) {} }
+  if (userApi && userApi.canEdit && userApi.canEdit()) {
+    try { db.collection("registrations").orderBy("createdAt", "desc").onSnapshot(function(s){ regs = s.docs.map(function(x){ return x.data(); }); renderOrg(); }, function(){}); } catch (e) {}
+    renderOrg();
+  }
+}
+init();
+</script>
+
+</body></html>
