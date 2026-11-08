@@ -1,0 +1,25 @@
+RIYADH 1V1 — STANDALONE STARTER
+
+FILES
+index.html: public bilingual site and organizer sign-in at #organizer.
+database.sql: database tables, constraints, grants, row-level access policies.
+
+BEFORE HOSTING
+1. Create a Supabase project in your own account. Run database.sql once in its SQL editor.
+2. Create an organizer email/password user in the project's Authentication area. Add that user's real UUID to the organizers table using the commented statement at the bottom of database.sql. Do not enable unrestricted organizer signup. A new auth account alone does not grant organizer access.
+3. Edit CONFIG in index.html: set supabaseUrl to your project HTTPS URL and supabaseAnonKey to its public legacy anon key. Only public client credentials belong in this file. NEVER put a service-role/secret key or password in website code or chat.
+4. Upload index.html to an HTTPS static hosting provider, such as Netlify. Follow the provider's current deployment instructions. This delivery does not create accounts, hosting, or a live link.
+5. Public URL: your deployed site address. Organizer URL: the same address with /#organizer appended. This replaces the earlier proposed organizer.html route. Knowing this link does not grant database access.
+6. Sign in as your approved organizer. Set date, venue, and entry fee. The fee is deliberately unspecified, not 250 SAR. Results can be published as one match per line. This starter displays round-by-round results, not an automatic connected bracket.
+
+TEST BEFORE INVITING PLAYERS
+Submit a sample registration. Confirm it appears for the organizer. In a signed-out private window, verify registration rows cannot be read using the public key. Verify an unapproved signed-in account cannot read them or publish settings. Change the fee and publish a sample result; verify public updates after refresh. Test Arabic, mobile layout, invalid links, network failure, sign-out, and expired sessions. Delete test records via your database dashboard.
+
+IMPORTANT LIMITS
+This is an un-deployed starter, not a tested production service. Auth and database integration need testing in your project. No live database, organizer account, or hosting was created.
+No payments, automatic 32-seat enforcement, duplicate prevention, player self-editing, automatic Swiss pairing/ranking, automatic bracket advancement, video uploads, password-reset UI, CAPTCHA, or rate limiting are included.
+Public inserts allow registration requests, not confirmed seats. Add server-side abuse controls/rate limiting before a public campaign. The WhatsApp fallback never claims the request was saved; players must send the message themselves. Phone details travel to WhatsApp only when the player follows that link.
+Player records are not fetched by the public page. RLS limits reads to approved organizers. Organizer sessions are kept in browser memory and are lost on refresh. Expired sessions require signing in again. No credentials are stored in localStorage.
+No entry fee has been fixed. Prizes preserve supplied amounts: champion 1500 SAR, runner-up 700 SAR, each semifinal loser 150 SAR. Dates and venue are unspecified. Schedule shows broad evening milestones, not the originally supplied minute-by-minute plan.
+For a standalone working ruleset, the ambiguous timed win-by-two rule is explicitly resolved: at the cap the leader wins, and tied games end on the next basket. Review this before publishing. Registration language is request-only and does not include the original refund/waiver policy text; obtain appropriate review and add your actual event terms and privacy notice before launch, especially for minors.
+Publish only player names you have permission to share. Never put phone numbers in public results. Maintain backups and remove personal data when no longer needed. Do not treat hidden page sections as security; the database policies enforce access.
